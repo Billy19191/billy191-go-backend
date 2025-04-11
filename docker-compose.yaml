@@ -5,14 +5,38 @@ services:
     image: postgres:latest
     container_name: postgres
     restart: always
+    env_file: .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend-server:
+    build:
+      dockerfile: dockerfile
+    container_name: backend-server
+    env_file: .env
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    restart: always
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres_data:

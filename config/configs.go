@@ -36,6 +36,11 @@ func GetValue() *Configs {
 		}
 	})
 	log.Default().Println("Config & ENV loaded successfully")
+	log.Printf("Postgres Host: %s", config.PostgresHost)
+	log.Printf("Postgres Port: %s", config.PostgresPort)
+	log.Printf("Postgres DB: %s", config.PostgresDB)
+	log.Printf("Postgres Username: %s", config.PostgresUsername)
+	log.Printf("Postgres Password: %s", config.PostgresPassword)
 	return config
 }
 
